@@ -1,3 +1,14 @@
+
+project_react_typescript
+├── README.md
+├── node_modules
+├── package.json
+├── .gitignore
+├── public
+└── src
+└── tsonfig.json
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
