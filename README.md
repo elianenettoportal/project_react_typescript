@@ -1,4 +1,6 @@
 
+### Project Layout
+```
 project_react_typescript
 ├── README.md
 ├── node_modules
@@ -7,7 +9,7 @@ project_react_typescript
 ├── public
 └── src
 └── tsonfig.json
-
+```
 
 # Getting Started with Create React App
 
