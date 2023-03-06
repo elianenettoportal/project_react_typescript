@@ -11,6 +11,104 @@ project_react_typescript
 └── tsonfig.json
 ```
 
+# Docker Image
+Inside the backend project, create this dockerfile to generate the image 
+```
+project_react_typescript/
+|
+├── src/
+├── frontend.dockerfile
+├── package.jon
+├── package-lock.json
+└── tsconfig.json
+```
+### Create a Dockerfile to wrapp the application into a container(frontend.dockerfile)
+      # We don't want to start from scratch.
+      # That is why we tell node here to use the current node image as base.
+      FROM node:18-slim as base2
+
+      # Create an application directory
+      RUN mkdir -p /app
+
+      # The /app directory should act as the main application directory
+      WORKDIR /app
+
+      # Copy the app package and package-lock.json file
+      COPY project_react_typescript/package*.json ./
+
+      # Install node packages
+      RUN npm install
+
+      # Copy or project directory (locally) in the current directory of our docker image (/app)
+      COPY project_react_typescript/ .
+
+      # Build the app
+      RUN npm run build
+
+      # Expose $PORT on container.
+      # We use a varibale here as the port is something that can differ on the environment.
+      EXPOSE 3005
+
+      # Set host to localhost / the docker image
+      ENV NUXT_HOST=0.0.0.0
+
+      # Set app port
+      ENV NUXT_PORT=3005
+
+      # Start the app
+      CMD [ "npm", "start" ]
+
+Create a root package and add this docker-compose.yml and Frontend project and Backend project.
+```
+root
+|
+├──── docker-compose.yml
+├──── Project_TypeScript/
+|	├── src/
+|	├── backend.dockerfile
+|	├── package.jon
+|	├── package-lock.json
+|	└── tsconfig.json
+├──── project_react_typescript/
+|	├── src/
+|	├── frontend.dockerfile
+|	├── package.jon
+|	├── package-lock.json
+|	└── tsconfig.json
+```
+### Docker-compose (docker-compose.yml)
+	version: "3.7"
+	services:
+	  sqlite3:
+	    image: nouchka/sqlite3:latest
+	    stdin_open: true
+	    tty: true
+	    volumes:
+	       - ./src/:/Project_TypeScript
+	  ts-api:
+	    image: web-backend:latest
+	    ports:
+	      - 3333:3333
+	    command: npm run start
+	  web-frontend:
+	    image: web-frontend:latest
+	    environment:
+	      PORT: 3005
+	      PROXY_API: http://web-backend:3333/
+	    ports:
+	      - 3005:3005
+
+
+### Build Docker File for Backend (In the root folder execute below command) <br>
+	docker build --file=Project_TypeScript/backend.dockerfile  -t web-backend .
+	
+### Build Docker File for Frontend (In the root folder execute below command) <br>
+	docker build --file=project_react_typescript/frontend.dockerfile  -t web-frontend .
+
+### Run docker-compose to create the container (In the root folder run below command) <br>
+	docker-compose -f docker-compose.yml up
+  
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
