@@ -1,4 +1,6 @@
 
+This is a smal project in react to learn typescript and dockerization
+
 ### Project Layout
 ```
 project_react_typescript
